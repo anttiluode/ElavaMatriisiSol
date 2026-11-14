@@ -44,7 +44,7 @@ export class LivingMatrix {
     if(t.age>maxAge){this.fail(t,"loan expired");return;}
     if(this.nodes.length>840){this.fail(t,"space exhausted");return;}
     const cost=this.mode==="no-budget"?0:0.42;
-    if(from.E<cost+0.15 && this.mode!=="no-budget")return;
+    if(from.E<cost+0.19 && this.mode!=="no-budget")return;
     const angle=this.steer(t);t.angle=angle;
     const step=19;
     const x=this.clamp(from.x+Math.cos(angle)*step,35,895),y=this.clamp(from.y+Math.sin(angle)*step,35,594);
@@ -84,7 +84,7 @@ export class LivingMatrix {
     let refund=0;
     for(const id of descendants){
       const n=this.nodes[id];if(n&&n.alive){
-        refund+=Math.max(0,n.E)+0.13;n.E=0;n.alive=false;
+        refund+=Math.max(0,n.E);n.E=0;n.alive=false;
       }
     }
     for(const other of this.shoots){
