@@ -20,3 +20,5 @@ jobs:
         run: node tests.mjs
       - name: Gate 1 — communication and transfer controls
         run: node gate1/test.mjs
+      - name: Gate 1b — dormant savings, erasure and starvation
+        run: node gate1b/test.mjs
