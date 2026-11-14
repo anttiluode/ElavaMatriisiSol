@@ -47,7 +47,7 @@ function showEncounter(e){
   spots("seenPatches");spots("actedPatches");
   text("eventText","No event yet");text("actText","Waiting for a message");text("message","—");return;
  }
- spots("seenPatches",e.e);spots("actedPatches",e.e,e.action);
+ spots("seenPatches",e.e);spots("actedPatches",e.correct?e.action:null,e.action);
  text("eventText","Observer sees: "+PATCHES[e.e]);
  text("actText",e.correct?"Contact. +"+e.gained.toFixed(1)+" sugar":"Missed. "+e.gained.toFixed(1)+" sugar found");
  $("actText").classList.toggle("negative",!e.correct);
