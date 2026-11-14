@@ -16,7 +16,7 @@ export class LivingMatrix {
   clamp(x,a,b){return Math.max(a,Math.min(b,x));}
   node(x,y,energy,parent){let n={id:this.nodes.length,x,y,E:energy,parent,alive:true,born:this.s,producing:0,flux:0,lastFlow:0,root:parent===-1};this.nodes.push(n);return n;}
   note(s){this.log.unshift({t:this.s,msg:s});if(this.log.length>16)this.log.length=16;}
-  sprout(n,angle,why){if(!n||!n.alive||this.shoots.filter(s=>s.alive).length>=14)return null;let t={id:this.shoots.length,node:n,origin:n,angle,age:0,spent:0,active:true,alive:true,paid:false,path:[],why,foundAt:-1};this.shoots.push(t);return t;}
+  sprout(n,angle,why){if(!n||!n.alive||this.shoots.filter(s=>s.alive&&s.active).length>=14)return null;let t={id:this.shoots.length,node:n,origin:n,angle,age:0,spent:0,active:true,alive:true,paid:false,path:[],why,foundAt:-1};this.shoots.push(t);return t;}
   total(){return this.nodes.reduce((sum,n)=>sum+(n.alive?n.E:0),0);}
   activeNodes(){return this.nodes.filter(n=>n.alive);}
   liveEdges(){return this.edges.filter(e=>e.alive);}
