@@ -1,0 +1,22 @@
+name: Validate living matrix experiments
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deterministic-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Gate 0 — resource network invariants
+        run: node tests.mjs
+      - name: Gate 1 — communication and transfer controls
+        run: node gate1/test.mjs
