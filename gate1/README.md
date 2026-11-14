@@ -61,9 +61,9 @@ Compare models with a matched seed and training count. To examine a different re
 
 Run with Node.js:
 
-\`\`\`sh
+```sh
 node gate1/test.mjs
-\`\`\`
+```
 
 Eight seeds (3, 5, 17, 73, 1105, 1121, 2036, 3341), **1,000** paired learning events per model, three event combinations presented during training:
 
@@ -81,12 +81,12 @@ These outcomes are very strong **because the architecture and environmental feed
 
 ## Reproducibility and files
 
-- \`index.html\` — static browser interface
-- \`app.js\` — UI, numeric displays and controlled interactions
-- \`engine.mjs\` — pure seeded agent dynamics, separate fast/slow matrices, environment, isolated evaluation, third-agent transfer
-- \`test.mjs\` — repeatability, negative controls, held-out comparison, frozen sender, no weight sharing, bounded resources
+- `index.html` — static browser interface
+- `app.js` — UI, numeric displays and controlled interactions
+- `engine.mjs` — pure seeded agent dynamics, separate fast/slow matrices, environment, isolated evaluation, third-agent transfer
+- `test.mjs` — repeatability, negative controls, held-out comparison, frozen sender, no weight sharing, bounded resources
 
-No external JS dependencies or backend. The page runs on GitHub Pages; locally, serve the repo directory with \`python -m http.server\` then visit \`/gate1/\` (some browsers restrict ES-module imports directly from file://).
+No external JS dependencies or backend. The page runs on GitHub Pages; locally, serve the repo directory with `python -m http.server` then visit `/gate1/` (some browsers restrict ES-module imports directly from file://).
 
 ## What should be tested next
 
