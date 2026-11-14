@@ -1,5 +1,7 @@
 # Elävä Matriisi — Sol 🌿
 
+**[Gate 1b — Jättebra: dormant pathways and language savings](https://anttiluode.github.io/ElavaMatriisiSol/gate1b/)** · [Methods and matched results](gate1b/README.md) · [Nine-condition ledger](gate1b/results.md)
+
 **[Gate 1 — Signal Graft: two organisms learn a shared signaling convention](https://anttiluode.github.io/ElavaMatriisiSol/gate1/)** · [Gate 1 methods and tests](gate1/README.md)
 
 
