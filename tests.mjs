@@ -1,0 +1,40 @@
+import assert from "node:assert/strict";
+import {LivingMatrix} from "./matrix.js";
+
+function run(seed,patience,mode,steps=900){
+  const m=new LivingMatrix(seed,patience,mode);
+  for(let i=0;i<steps;i++)m.tick();
+  return m;
+}
+const a=run(1105,130,"living");
+const b=run(1105,130,"living");
+assert.deepEqual(a.summary(),b.summary(),"fixed seed must reproduce identical outcomes");
+assert.deepEqual(a.history,b.history,"history must also be deterministic");
+assert(a.stats.success>0,"default run should make at least one productive contact");
+assert(a.stats.failed>0,"default run should also contain an unsuccessful direction");
+assert(a.nodes.every(n=>!n.alive||n.E>=-1e-10),"no living reserve can be negative");
+assert(a.edges.every(e=>Number.isFinite(e.D)&&Number.isFinite(e.flux)),"conductance and flux must remain finite");
+const short=run(1105,70,"living",1250);
+assert(short.stats.failed>0,"short loan must fail some explorations");
+const free=run(1105,130,"no-budget",1000);
+assert(free.liveEdges().length>a.liveEdges().length,"free growth must produce more retained structure for this matched seed");
+const flux=new LivingMatrix(22,140,"living");
+for(let i=0;i<75;i++)flux.tick();
+const before=flux.total();
+flux.transport();
+assert(Math.abs(flux.total()-before)<1e-8,"resource transport must conserve total reserves");
+const edge=flux.liveEdges()[0];
+assert(edge,"model should have an edge available to cut");
+const nBefore=flux.liveEdges().length;
+assert(flux.cut(edge.id),"cut should succeed");
+assert(flux.liveEdges().length<nBefore,"cut removes descendants");
+for(let i=0;i<150;i++)flux.tick();
+assert(flux.nodes.every(n=>!n.alive||Number.isFinite(n.E)&&n.E>=-1e-10),"damage must not corrupt reserves");
+const shaded=new LivingMatrix(1105,130,"living");
+shaded.sources.forEach(s=>s.power*=.08);
+for(let i=0;i<200;i++)shaded.tick();
+assert(Number.isFinite(shaded.total()),"shade intervention remains numerically finite");
+console.log("PASS: determinism, local budgets, successful and failed loans, no-budget ablation, transport conservation, injury and shade.");
+console.log("Living run:",a.summary());
+console.log("Short patience:",short.summary());
+console.log("Free-growth ablation:",free.summary());
