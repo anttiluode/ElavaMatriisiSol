@@ -16,7 +16,7 @@ assert(a.nodes.every(n=>!n.alive||n.E>=-1e-10),"no living reserve can be negativ
 assert(a.edges.every(e=>Number.isFinite(e.D)&&Number.isFinite(e.flux)),"conductance and flux must remain finite");
 const short=run(1105,70,"living",1250);
 assert(short.stats.failed>0,"short loan must fail some explorations");
-const free=run(1105,130,"no-budget",1000);
+const free=run(1105,130,"no-budget",900);
 assert(free.liveEdges().length>a.liveEdges().length,"free growth must produce more retained structure for this matched seed");
 const flux=new LivingMatrix(22,140,"living");
 for(let i=0;i<75;i++)flux.tick();
