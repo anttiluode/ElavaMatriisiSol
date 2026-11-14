@@ -37,7 +37,7 @@ export class LivingMatrix {
   }
   grow(t){
     if(!t.alive||!t.active)return;
-    t.age++;
+    t.age+=4;
     const from=t.node;
     if(!from.alive){t.alive=false;return;}
     const maxAge=this.mode==="no-budget"?650:this.patience;
@@ -65,14 +65,37 @@ export class LivingMatrix {
   fail(t,why){
     if(!t.alive)return;
     t.alive=false;t.active=false;this.stats.failed++;
-    let refund=0;
-    for(const id of t.path.slice().reverse()){
-      const e=this.edges[id];if(!e||!e.alive)continue;
-      const n=this.nodes[e.b];
-      e.alive=false;if(n&&n.alive){refund+=Math.max(0,n.E)+0.13;n.E=0;n.alive=false;}
+    // Wound back to the first edge of this exploratory branch. Any
+    // downstream shoots lose their physical connection to the body.
+    const descendants=new Set();
+    if(t.path.length)descendants.add(this.edges[t.path[0]].b);
+    let changed=true;
+    while(changed){
+      changed=false;
+      for(const e of this.edges){
+        if(e.alive&&descendants.has(e.a)&&!descendants.has(e.b)){
+          descendants.add(e.b);changed=true;
+        }
+      }
     }
-    if(t.origin.alive && this.mode!=="no-budget"){const amount=refund*.58;t.origin.E+=amount;this.stats.recovered+=amount;}
-    this.note("A direction withered ("+why+"). "+t.path.length+" segments returned to the body.");
+    for(const e of this.edges){
+      if(e.alive&&(descendants.has(e.a)||descendants.has(e.b)))e.alive=false;
+    }
+    let refund=0;
+    for(const id of descendants){
+      const n=this.nodes[id];if(n&&n.alive){
+        refund+=Math.max(0,n.E)+0.13;n.E=0;n.alive=false;
+      }
+    }
+    for(const other of this.shoots){
+      if(other!==t&&other.alive&&descendants.has(other.node.id)){
+        other.alive=false;other.active=false;
+      }
+    }
+    if(t.origin.alive&&this.mode!=="no-budget"){
+      const amount=refund*.58;t.origin.E+=amount;this.stats.recovered+=amount;
+    }
+    this.note("A direction withered ("+why+"). "+descendants.size+" segments returned to the body.");
   }
   cut(edgeId){
     const edge=this.edges[edgeId];if(!edge||!edge.alive)return false;
@@ -99,22 +122,37 @@ export class LivingMatrix {
     }
   }
   transport(){
-    // Synchronous conservative transfers; a static resource gradient drives flux.
+    // First plan every transfer; then scale simultaneous outgoing flux
+    // to prevent any node spending more energy than it actually holds.
     const delta=new Float64Array(this.nodes.length);
+    const outgoing=new Float64Array(this.nodes.length);
+    const planned=[];
     for(const e of this.edges){
       if(!e.alive)continue;
-      const a=this.nodes[e.a],b=this.nodes[e.b];if(!a.alive||!b.alive){e.alive=false;continue;}
-      let q=e.D*0.17*(a.E-b.E);
-      const available=q>0?Math.max(0,a.E-.02):Math.max(0,b.E-.02);
-      q=Math.sign(q)*Math.min(1.35,Math.abs(q),available*.55);
+      const a=this.nodes[e.a],b=this.nodes[e.b];
+      if(!a.alive||!b.alive){e.alive=false;continue;}
+      const q=this.clamp(e.D*0.17*(a.E-b.E),-1.35,1.35);
+      planned.push([e,q]);
+      if(q>0)outgoing[e.a]+=q;
+      else outgoing[e.b]-=q;
+    }
+    const scale=new Float64Array(this.nodes.length);
+    for(const n of this.nodes){
+      scale[n.id]=!n.alive||outgoing[n.id]<=0?1:
+        Math.min(1,Math.max(0,n.E-.02)/outgoing[n.id]);
+    }
+    for(const [e,unscaled] of planned){
+      const q=unscaled*(unscaled>=0?scale[e.a]:scale[e.b]);
       e.flux=q;delta[e.a]-=q;delta[e.b]+=q;
-      a.flux+=Math.abs(q);b.flux+=Math.abs(q);this.stats.transport+=Math.abs(q);
+      const a=this.nodes[e.a],b=this.nodes[e.b];
+      a.flux+=Math.abs(q);b.flux+=Math.abs(q);
+      this.stats.transport+=Math.abs(q);
       if(this.mode!=="no-canal"){
         e.D=this.clamp(e.D+0.018*Math.sqrt(Math.abs(q))-0.003*e.D,0.03,2.6);
       }
       e.quiet=Math.abs(q)<.008?e.quiet+1:Math.max(0,e.quiet-3);
     }
-    for(const n of this.nodes)if(n.alive)n.E+=delta[n.id];
+    for(const n of this.nodes)if(n.alive)n.E=Math.max(0,n.E+delta[n.id]);
   }
   upkeep(){
     for(const n of this.nodes){
@@ -131,7 +169,6 @@ export class LivingMatrix {
       if(!path.length){t.alive=false;continue;}
       // An established path isn't immediately destroyed by a lost light;
       // actual starvation or long-term absent transport must erode it.
-      if(this.s-t.age>0){} // dormant shoot has no special tick counter
       const noSupply=path.every(e=>e.quiet>220&&e.D<0.31);
       if(noSupply){this.fail(t,"unused path");}
     }
