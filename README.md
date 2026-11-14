@@ -1,5 +1,8 @@
 # Elävä Matriisi — Sol 🌿
 
+**[Gate 1 — Signal Graft: two organisms learn a shared signaling convention](https://anttiluode.github.io/ElavaMatriisiSol/gate1/)** · [Gate 1 methods and tests](gate1/README.md)
+
+
 **A matrix that must pay for the right to keep changing.**
 
 **[Open the interactive browser laboratory](https://anttiluode.github.io/ElavaMatriisiSol/)** · [Köynnös inspiration](https://github.com/anttiluode/Koynnos)
