@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#081510">
+<meta name="description" content="Elävä Matriisi: a living network whose geometry borrows energy, carries flux and earns its own maintenance.">
+<title>Elävä Matriisi — a network that must sustain itself</title>
+<style>
+:root{color-scheme:dark;--bg:#091611;--panel:#10231c;--deep:#07130f;--stroke:#2b493d;--mint:#9fdcc2;--bright:#d5f2de;--text:#e4ebdd;--dim:#9db1a1;--gold:#f6ca88;--red:#e7a08f;--sans:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif;--mono:ui-monospace,Consolas,monospace}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse 75% 45% at 45% -12%,#204334 0%,transparent 72%),var(--bg);color:var(--text);font-family:var(--sans)}
+a{color:var(--mint);text-decoration-color:#547d65;text-underline-offset:3px}a:hover{text-decoration-color:var(--mint)}
+.wrap{max-width:1570px;margin:auto;padding:24px 28px 35px}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:22px;margin-bottom:21px}
+.eyebrow{font:11px var(--mono);letter-spacing:.16em;color:var(--mint);text-transform:uppercase;display:flex;align-items:center;gap:11px}.eyebrow:before{content:"";display:block;width:22px;height:1px;background:#81bb9d}
+h1{font-weight:500;font-family:Georgia,'Times New Roman',serif;font-size:clamp(37px,4.1vw,66px);letter-spacing:-.035em;line-height:1.05;margin:10px 0 10px}
+h1 em{font-weight:400;color:#a1cba9}.lead{max-width:830px;font-size:15px;line-height:1.55;color:var(--dim);margin:0}.toplinks{font:12px var(--mono);white-space:nowrap;padding-top:6px;display:flex;gap:16px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 345px;gap:18px}
+.stage{min-width:0;border:1px solid var(--stroke);border-radius:14px;overflow:hidden;background:linear-gradient(135deg,#0d2119,#0a1611);position:relative;box-shadow:0 20px 70px #0003}
+.stageHead{height:51px;padding:0 21px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid #294538;background:#0c1d16;color:var(--dim);font:11px var(--mono)}
+.status{display:flex;align-items:center;gap:8px}.status .dot{width:6px;height:6px;border-radius:50%;background:#a2e7b8;box-shadow:0 0 12px #8fdca2}.status.paused .dot{background:#deba83;box-shadow:none}
+.canvasArea{position:relative}#world{display:block;width:100%;height:auto;aspect-ratio:960/620;cursor:crosshair;touch-action:none}
+.floatnote{position:absolute;left:17px;bottom:14px;padding:9px 11px;border:1px solid #2e5845aa;background:#0a1b15d9;border-radius:7px;color:#a9c4ad;font:11px var(--mono);pointer-events:none;max-width:calc(100% - 34px)}
+.key{display:flex;flex-wrap:wrap;gap:15px;padding:13px 19px;border-top:1px solid var(--stroke);font:11px var(--mono);color:var(--dim)}
+.key span{display:flex;align-items:center;gap:7px}.sw{display:block;width:17px;height:3px;background:#75c79f;border-radius:4px}.sw.gold{background:var(--gold)}.sw.dashed{background:repeating-linear-gradient(to right,#cf8e73 0 5px,transparent 5px 8px)}.sw.light{width:10px;height:10px;border:1px solid var(--gold);border-radius:50%;background:#eab76b33}
+.side{display:grid;gap:12px;align-content:start}.panel{border:1px solid var(--stroke);background:#11241cd9;border-radius:12px;padding:19px}
+.panel h2{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--mint);font-weight:600;margin:0 0 16px}
+.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 10px;margin-bottom:18px}.metric b{display:block;font:27px Georgia,serif;color:var(--bright);font-weight:400;line-height:1.25}.metric small{display:block;font:10px var(--mono);text-transform:uppercase;letter-spacing:.06em;color:var(--dim);margin-top:4px}
+.ledger{height:90px;width:100%;display:block;background:#0b1d15;border:1px solid #254334;border-radius:7px}
+.ledgerKey{display:flex;gap:13px;margin:7px 0 0;font:10px var(--mono);color:var(--dim)}.ledgerKey i{display:inline-block;width:11px;height:2px;vertical-align:middle;margin-right:5px;background:#dfbf83}.ledgerKey i.vine{background:#72caa5}
+.buttonrow{display:flex;gap:7px;margin-bottom:13px}.buttonrow>*{flex:1}
+button,select,input{font:12px var(--sans)}button{border:1px solid #385b47;color:#e9f1e4;background:#1b3b2b;border-radius:7px;padding:10px 9px;cursor:pointer;transition:background .14s,border-color .14s}button:hover{border-color:#82bc98;background:#285037}button.primary{background:#b9e4ad;color:#10251c;border-color:#b9e4ad;font-weight:600}button.primary:hover{background:#d3edc6}button.active{background:#533c29;color:#f5d3a4;border-color:#b48657}
+.controls{display:grid;gap:15px}.controlhead{display:flex;justify-content:space-between;gap:12px;font-size:12px;color:#d1e0d1}.controlhead output{font:11px var(--mono);color:var(--gold)}
+input[type=range]{width:100%;accent-color:#a1d9a6;cursor:pointer;margin-top:8px}
+select,input[type=number]{width:100%;border:1px solid #375644;border-radius:7px;background:#0c1a15;color:#e0ede0;padding:9px 11px}
+.subtle{font-size:11px;line-height:1.5;color:var(--dim);margin:10px 0 0}
+.log{display:grid;gap:8px;max-height:155px;overflow-y:auto;font:11px/1.45 var(--mono);color:#b8cbb9}.log .entry{border-bottom:1px solid #ffffff12;padding-bottom:8px}.log time{color:#d3a36d;margin-right:9px}
+.lower{margin-top:18px;display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:15px}
+.info{border:1px solid #294738;border-radius:12px;padding:20px 22px;background:#11231b85}.info h3{font:17px Georgia,serif;font-weight:400;margin:0 0 8px;color:#cce7ce}.info p{font-size:12px;line-height:1.7;color:var(--dim);margin:0}
+footer{display:flex;gap:18px;justify-content:space-between;margin-top:21px;color:var(--dim);font:11px/1.6 var(--mono)}
+@media(max-width:1100px){.layout{grid-template-columns:minmax(0,1fr)}.side{grid-template-columns:repeat(2,minmax(0,1fr))}.side .panel:last-child{grid-column:1/-1}.lower{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.wrap{padding:19px 13px}header{display:block}.toplinks{margin-top:13px}.side,.lower{grid-template-columns:1fr}.side .panel:last-child{grid-column:auto}.stageHead{padding:0 10px;font-size:9px}.floatnote{font-size:9px;bottom:8px;left:8px}.key{gap:10px}.panel{padding:16px}h1{font-size:39px}}
+</style>
+</head>
+<body><div class="wrap">
+<header><div><div class="eyebrow">An experimental garden · SOL LAB / 01</div><h1>Elävä <em>Matriisi</em></h1><p class="lead">A network that must pay for its own existence. Exploratory branches borrow from the body; local resource transport reinforces useful channels. Unfunded directions disappear, leaving their history in the surviving geometry.</p></div><div class="toplinks"><a href="https://github.com/anttiluode/ElavaMatriisiSol" target="_blank" rel="noopener">Source code ↗</a><a href="https://github.com/anttiluode/Koynnos" target="_blank" rel="noopener">Köynnös ↗</a></div></header>
+<main class="layout">
+<section class="stage"><div class="stageHead"><span class="status" id="runStatus"><span class="dot"></span><span id="statusText">SYSTEM GROWING</span></span><span id="tickLabel">T = 0000 · SEED 1105</span><span id="modeLabel">LIVING / CANALIZED</span></div>
+<div class="canvasArea"><canvas id="world" width="960" height="620" aria-label="Interactive view of a branching living resource network"></canvas><div class="floatnote" id="stageHint">Click <strong>Cut branch</strong>, then a stem · or drag a glowing light</div></div>
+<div class="key"><span><i class="sw"></i>fed connection</span><span><i class="sw dashed"></i>fading connection</span><span><i class="sw gold"></i>active growth / borrowed time</span><span><i class="sw light"></i>local energy source</span></div>
+</section>
+<aside class="side">
+<section class="panel"><h2>Body ledger</h2><div class="metrics">
+<div class="metric"><b id="mEnergy">—</b><small>Stored resource</small></div>
+<div class="metric"><b id="mEdges">—</b><small>Living connections</small></div>
+<div class="metric"><b id="mLoans">—</b><small>Open explorations</small></div>
+<div class="metric"><b id="mReturns">—</b><small>Sources reached</small></div>
+<div class="metric"><b id="mWither">—</b><small>Directions withered</small></div>
+<div class="metric"><b id="mRecovered">—</b><small>Resource recycled</small></div>
+</div><canvas class="ledger" id="history" width="300" height="90"></canvas><div class="ledgerKey"><span><i></i>stored resource</span><span><i class="vine"></i>living links</span></div></section>
+<section class="panel"><h2>Intervene in the room</h2><div class="buttonrow"><button class="primary" id="pause">Pause</button><button id="step">Step +1</button><button id="reset">Reset</button></div><div class="buttonrow"><button id="cut">Cut branch</button><button id="move">Move light</button><button id="drought">Shade / restore</button></div>
+<div class="controls">
+<div><div class="controlhead"><label for="patience">Exploration loan · patience</label><output id="patienceValue">130 ticks</output></div><input id="patience" type="range" min="40" max="360" step="10" value="130"></div>
+<div><div class="controlhead"><label for="speed">Growth speed</label><output id="speedValue">2.0×</output></div><input id="speed" type="range" min=".25" max="5" step=".25" value="2"></div>
+<div><div class="controlhead"><label for="mode">Ablation</label><span style="color:var(--dim);font:10px var(--mono)">resets seed</span></div><select id="mode"><option value="living">Living · local budgets + adaptive flow</option><option value="no-canal">Fixed channels · no flux reinforcement</option><option value="no-budget">Free growth · no loan expiry</option></select></div>
+<div><div class="controlhead"><label for="seed">Random seed</label><span style="color:var(--dim);font:10px var(--mono)">reproducible</span></div><input id="seed" type="number" value="1105" step="1"></div>
+</div><p class="subtle" id="interactionHelp">Every new tip is temporarily subsidized. Let it reach a source before patience runs out—or watch the branch retract.</p></section>
+<section class="panel"><h2>Field notebook · last events</h2><div class="log" id="log" aria-live="polite"></div></section>
+</aside></main>
+<section class="lower">
+<div class="info"><h3>01 / Borrow to explore</h3><p>New tips begin as an expense, not a profitable route. The patience control limits how long an unsuccessful shoot may keep its exploratory loan. Resource flows between neighboring nodes, not teleported to their tips.</p></div>
+<div class="info"><h3>02 / Flux reshapes conductance</h3><p>Each connection responds to the resource it actually carries. Conductance rises with flux and decays otherwise. Compare with <em>Fixed channels</em> to see what changes without that feedback.</p></div>
+<div class="info"><h3>03 / No answer key</h3><p>There is no global task score, backpropagation, or shortest-path oracle. Growth responds to nearby light, finite local reserves, and structural history. The sources supply energy; they are not labels.</p></div>
+</section>
+<footer><span>Exploratory toy model · not a biological reconstruction or demonstrated intelligence.</span><span>Inspired by Köynnös, canalization, Physarum transport models, and the idea of a matrix that must maintain itself.</span></footer>
+</div><script type="module" src="./app.js"></script></body></html>
